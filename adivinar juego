@@ -1,0 +1,86 @@
+import tkinter as tk
+from tkinter import messagebox
+import random
+
+# Función que se ejecuta cuando el usuario hace un intento
+def hacer_intento():
+    try:
+        # Obtener el intento del usuario
+        intento = int(entry.get())
+
+        # Validar si el número está dentro del rango permitido
+        if intento < 0 or intento > 100:
+            messagebox.showwarning("Advertencia", "Por favor, ingresa un número entre 0 y 100.")
+            return
+
+        # Comprobar si el intento es correcto
+        global intentos
+        if intento == numero_secreto:
+            messagebox.showinfo("¡Felicidades!", f"¡Has adivinado el número! El número era {numero_secreto}.")
+            reiniciar_juego()  # Reiniciar el juego después de acertar
+        else:
+            intentos_restantes = 5 - intentos
+            if intentos_restantes > 0:
+                # Dar pistas si el número es mayor o menor que 50
+                if intento < 50:
+                    pista = "El número es mayor que 50."
+                elif intento > 50:
+                    pista = "El número es menor que 50."
+                else:
+                    pista = "El número es 50, pero no has acertado."
+                
+                # Dar un mensaje con el número de intentos restantes y la pista
+                messagebox.showinfo("Intento incorrecto", f"{pista} Te quedan {intentos_restantes} intentos.")
+                intentos += 1
+                label_intentos.config(text=f"Intentos: {intentos}/5")  # Actualizar la visualización de intentos
+            else:
+                # Si se agotan los intentos, mostrar el número secreto y reiniciar
+                messagebox.showerror("¡Game Over!", f"Se acabaron tus intentos. El número era {numero_secreto}.")
+                reiniciar_juego()
+    except ValueError:
+        messagebox.showwarning("Advertencia", "Por favor, ingresa un número válido.")
+
+# Reiniciar el juego
+def reiniciar_juego():
+    global numero_secreto, intentos
+    numero_secreto = random.randint(0, 100)  # Generar un nuevo número aleatorio
+    intentos = 0  # Reiniciar el contador de intentos
+    entry.delete(0, tk.END)  # Limpiar la entrada de texto
+    label_intentos.config(text=f"Intentos: {intentos}/5")  # Mostrar intentos actuales
+
+# Crear la ventana principal
+root = tk.Tk()
+root.title("Juego de Adivinar el Número")
+root.geometry("400x350")
+root.config(bg="#f2f2f2")  # Fondo gris claro
+
+# Título del juego
+titulo = tk.Label(root, text="Adivina el Número", font=("Arial", 20, "bold"), bg="#4CAF50", fg="white", pady=10)
+titulo.pack(fill="x")
+
+# Instrucciones del juego
+instrucciones = tk.Label(root, text="Ingresa un número entre 0 y 100. Tienes 5 intentos.", font=("Arial", 12), bg="#f2f2f2", fg="#555")
+instrucciones.pack(pady=10)
+
+# Entrada de texto para que el jugador ingrese el número
+entry = tk.Entry(root, font=("Arial", 14), justify="center", width=5)
+entry.pack(pady=10)
+
+# Etiqueta para mostrar los intentos restantes
+label_intentos = tk.Label(root, text="Intentos: 0/5", font=("Arial", 12), bg="#f2f2f2", fg="#555")
+label_intentos.pack()
+
+# Botón para hacer el intento
+boton_intento = tk.Button(root, text="Adivinar", font=("Arial", 14), command=hacer_intento, bg="#4CAF50", fg="white", padx=10, pady=5)
+boton_intento.pack(pady=10)
+
+# Botón para reiniciar el juego
+boton_reiniciar = tk.Button(root, text="Nuevo Juego", font=("Arial", 14), command=reiniciar_juego, bg="#FF5722", fg="white", padx=10, pady=5)
+boton_reiniciar.pack(pady=10)
+
+# Inicializar el número secreto y los intentos
+numero_secreto = random.randint(0, 100)
+intentos = 0
+
+# Ejecutar la interfaz
+root.mainloop()
